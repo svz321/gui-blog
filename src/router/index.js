@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../components/Login.vue'
 import Home from '../components/Home.vue'
 import Register from '../components/Register.vue'
+import article from '../components/common/article-demo.vue'
 
 Vue.use(VueRouter)
 
@@ -25,7 +26,11 @@ const router = new VueRouter({
     {
       path: '/register',
       component: Register
-    }
+    },
+    {
+      path: '/article',
+      component: article
+    },
   ]
 })
 /*

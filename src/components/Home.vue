@@ -3,14 +3,36 @@
        <Header  :getheaderdata="header_data"></Header>
         <div class="home_main">
             <el-container>
+                <!-- 推送 !-->
                 <el-aside width="65%" >
+                    <!-- 滑页 !-->
                     <el-carousel indicator-position="outside" class="home_carousel">
                         <el-carousel-item v-for="item in 4" :key="item">
                         <h3>{{ item }}</h3>
                         </el-carousel-item>
                     </el-carousel>
 
-                    <div class="home_pagination">
+                    <!-- 文章 !-->
+                    <div class="infinite-list-wrapper" style="overflow:auto">
+                        <ul
+                        class="list"
+                        v-infinite-scroll="load"
+                        infinite-scroll-disabled="disabled"
+                        style="margin-left:10px;"
+                        >
+                        <div  v-for="i in count" :key=i>
+                            <Article :getarticle_data=demos.article_data[i-1]
+                            style="margin-left:120px;"
+                            >
+                            </Article>
+                            <el-divider></el-divider>
+                        </div>
+                        </ul>
+                        <p v-if="loading" style="text-align:center;">加载中...</p>
+                        <p v-if="noMore" style="text-align:center;">没有更多了</p>
+                    </div>
+                    <!-- 分页 !-->
+                    <!-- <div class="home_pagination">
                         <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -20,9 +42,9 @@
                         layout="sizes, prev, pager, next, jumper"
                         :total="400">
                         </el-pagination>
-                    </div>
+                    </div> -->
                 </el-aside>
-                
+                <!-- 日历 !-->
                 <el-main>
                     <div class="calendar">
                         <div class="date-header">
@@ -48,13 +70,42 @@
 
 <script>
 import Header from "./common/Header.vue"
+import Article from "./common/article-demo.vue"
 export default {
     name:"home_set",
     data(){
         return{
+            count: 0,
+            loading: false,
             header_data:{
                 activeIndex1:'1',
                 activeIndex2:'',
+            },
+            demos:{
+                sum:3,
+                article_data:[
+                {
+                    hrefs:"111",
+                    content:"content11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+                    title:"title1111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+                    likes:20,
+                    picture:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+                },
+                {
+                    hrefs:"222",
+                    content:"content2222222222222222222222222222222222222222222222222222222222222222222222222222222222222",
+                    title:"title222222222222222222222222222222222222222222222",
+                    likes:20,
+                    picture:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+                },
+                {
+                    hrefs:"333",
+                    content:"content33333333333333333333",
+                    title:"title33333333333333333",
+                    likes:20,
+                    picture:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+                },
+                ],
             },
             item:"",
             activeIndex1:'1',
@@ -68,14 +119,15 @@ export default {
         }
     },
     components:{
-        Header
+        Header,
+        Article
     },
     mounted(){
         this.created();
-        console.log(new Date(
+        /*console.log(new Date(
                 this.month==1?this.year-1:this.year,
-                this.month==1?12:this.month-1,0).getDate())
-        console.log(new Date(this.year, this.month-1,1).getDay())
+                this.month==1?12:this.month-1,0).getDate())*/
+        //console.log(new Date(this.year, this.month-1,1).getDay())
     },
     computed:{
         beginDay(){
@@ -88,6 +140,14 @@ export default {
             return new Date(
                 this.month==0?this.year-1:this.year,
                 this.month==0?12:this.month-1,0).getDate();
+        },
+        noMore () {
+            if(this.count >= this.demos.sum)
+                this.count = this.demos.sum
+            return this.count == this.demos.sum
+        },
+        disabled () {
+            return this.loading || this.noMore
         },
     },
     methods:{
@@ -143,6 +203,13 @@ export default {
         handleCurrentChange(val) {
             console.log(`当前页: ${val}`);
         },
+        load () {
+            this.loading = true
+            setTimeout(() => {
+                this.count += 2
+                this.loading = false
+            }, 2000)
+        }
     }
 }
 </script>
